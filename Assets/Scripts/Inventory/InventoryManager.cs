@@ -7,6 +7,7 @@ using UnityEngine;
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager instance; // Singleton for easy access
+    public InventoryUI inventoryUI; // Reference to UI script
     private List<Item> inventory = new List<Item>(); // Stores collected items
 
     void Awake()
@@ -18,12 +19,33 @@ public class InventoryManager : MonoBehaviour
     /// <summary>
     /// Adds an item to the inventory.
     /// </summary>
-    public void AddItem(Item newItem)
+   public void AddItem(Item newItem)
+{
+    inventory.Add(newItem);
+    Debug.Log("Picked up: " + newItem.itemName);
+
+    if (inventoryUI != null)
     {
-        inventory.Add(newItem);
-        Debug.Log("Picked up: " + newItem.itemName);
-        PrintInventory();
+        Debug.Log("Updating UI..."); // 🛠 Debug: Is UI being updated?
+        inventoryUI.UpdateInventoryUI();
     }
+    else
+    {
+        Debug.LogError("inventoryUI is NULL! Make sure it's assigned in the Inspector.");
+    }
+
+    PrintInventory();
+}
+
+
+        /// <summary>
+    /// Returns the list of items in the inventory.
+    /// </summary>
+    public List<Item> GetInventory()
+    {
+        return inventory;
+    }
+
 
     /// <summary>
     /// Prints the inventory contents to the console.

@@ -11,8 +11,10 @@ public class ItemPickup : MonoBehaviour
     {
         if (other.CompareTag("Player")) // Make sure only the player can pick it up
         {
-            InventoryManager.instance.AddItem(item);
-            Destroy(gameObject); // Remove item from the world after pickup
+            bool added = InventoryManager.instance.AddItem(item);
+if (added)
+    Destroy(gameObject);
+
         }
     }
 }

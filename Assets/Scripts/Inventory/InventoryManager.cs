@@ -9,6 +9,7 @@ public class InventoryManager : MonoBehaviour
     public static InventoryManager instance; // Singleton for easy access
     public InventoryUI inventoryUI; // Reference to UI script
     private List<Item> inventory = new List<Item>(); // Stores collected items
+    public int maxInventorySize = 8; // Set the limit (adjust as needed)
 
     void Awake()
     {
@@ -19,23 +20,24 @@ public class InventoryManager : MonoBehaviour
     /// <summary>
     /// Adds an item to the inventory.
     /// </summary>
-   public void AddItem(Item newItem)
+public bool AddItem(Item newItem)
 {
+    if (inventory.Count >= 8)
+    {
+        Debug.Log("Inventory full. Cannot add: " + newItem.itemName);
+        return false;
+    }
+
     inventory.Add(newItem);
     Debug.Log("Picked up: " + newItem.itemName);
 
     if (inventoryUI != null)
-    {
-        Debug.Log("Updating UI..."); // 🛠 Debug: Is UI being updated?
         inventoryUI.UpdateInventoryUI();
-    }
-    else
-    {
-        Debug.LogError("inventoryUI is NULL! Make sure it's assigned in the Inspector.");
-    }
 
     PrintInventory();
+    return true;
 }
+
 
 
         /// <summary>

@@ -7,31 +7,57 @@ public class CashierViewController : MonoBehaviour
     public Camera cashierCamera;
     public vThirdPersonController playerController;
 
+    public DialogueSystem dialogueSystem;
+
     private bool isInCashierMode = false;
 
-    public void EnterCashierMode()
+
+    private SkinnedMeshRenderer[] cachedRenderers;
+
+private void CacheRenderersIfNeeded()
+{
+    if (cachedRenderers == null || cachedRenderers.Length == 0)
+    {
+        cachedRenderers = GetComponentsInChildren<SkinnedMeshRenderer>(true);
+        Debug.Log("🔍 Found " + cachedRenderers.Length + " SkinnedMeshRenderers.");
+        foreach (var r in cachedRenderers)
+        {
+            Debug.Log("🎯 Renderer: " + r.gameObject.name);
+        }
+    }
+}
+
+
+
+    public void EnterCashierMode(CustomerProfile customerProfile)
     {
         if (isInCashierMode) return;
 
         Debug.Log(">>> EnterCashierMode triggered!");
 
         // Disable player control
-       if (playerController != null)
+        if (playerController != null)
         {
             playerController.lockMovement = true;
             playerController.lockRotation = true;
-            playerController.input = Vector2.zero; // 🚫 Stop any current motion
+            playerController.input = Vector2.zero;
+
+            Rigidbody rb = playerController.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                rb.isKinematic = true; // 💥 Freeze body entirely
+            }
         }
 
-
-        // Switch cameras (Deactivate third person camera object)
+        // Switch cameras
         if (thirdPersonCamera != null)
         {
             thirdPersonCamera.gameObject.SetActive(false);
             Debug.Log("Third-person camera GameObject disabled.");
         }
 
-        // Activate cashier camera object
         if (cashierCamera != null)
         {
             cashierCamera.gameObject.SetActive(true);
@@ -43,8 +69,24 @@ public class CashierViewController : MonoBehaviour
         Cursor.visible = true;
         Debug.Log("Cursor unlocked and visible.");
 
+        // Hide player visuals (VRM)
+        CacheRenderersIfNeeded();
+        foreach (var r in cachedRenderers)
+        {
+            r.enabled = false;
+        }
+
+
         isInCashierMode = true;
+
+    
+    if (dialogueSystem != null && customerProfile != null)
+    {
+        // New method we'll define in DialogueSystem to accept a whole profile
+        dialogueSystem.StartCustomerInteraction(customerProfile);
     }
+
+}
 
     public void ExitCashierMode()
     {
@@ -60,6 +102,13 @@ public class CashierViewController : MonoBehaviour
         }
 
         // Switch cameras back (Reactivate third person camera object)
+
+                // Re-enable player visuals
+        foreach (var r in cachedRenderers)
+        {
+            r.enabled = true;
+        }
+
         if (cashierCamera != null)
         {
             cashierCamera.gameObject.SetActive(false);
@@ -76,6 +125,13 @@ public class CashierViewController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         Debug.Log("Cursor locked and hidden.");
+
+        Rigidbody rb = playerController.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+        }
+
 
         isInCashierMode = false;
     }

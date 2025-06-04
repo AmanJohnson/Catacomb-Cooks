@@ -13,19 +13,22 @@ public class CashierViewController : MonoBehaviour
 
 
     private SkinnedMeshRenderer[] cachedRenderers;
+    
+    public GameObject inventoryCanvas; 
+
 
 private void CacheRenderersIfNeeded()
-{
-    if (cachedRenderers == null || cachedRenderers.Length == 0)
     {
-        cachedRenderers = GetComponentsInChildren<SkinnedMeshRenderer>(true);
-        Debug.Log("🔍 Found " + cachedRenderers.Length + " SkinnedMeshRenderers.");
-        foreach (var r in cachedRenderers)
+        if (cachedRenderers == null || cachedRenderers.Length == 0)
         {
-            Debug.Log("🎯 Renderer: " + r.gameObject.name);
+            cachedRenderers = GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            Debug.Log("🔍 Found " + cachedRenderers.Length + " SkinnedMeshRenderers.");
+            foreach (var r in cachedRenderers)
+            {
+                Debug.Log("🎯 Renderer: " + r.gameObject.name);
+            }
         }
     }
-}
 
 
 
@@ -34,6 +37,10 @@ private void CacheRenderersIfNeeded()
         if (isInCashierMode) return;
 
         Debug.Log(">>> EnterCashierMode triggered!");
+
+        if (inventoryCanvas != null)
+        inventoryCanvas.SetActive(false);
+
 
         // Disable player control
         if (playerController != null)
@@ -82,7 +89,9 @@ private void CacheRenderersIfNeeded()
     
     if (dialogueSystem != null && customerProfile != null)
     {
-        // New method we'll define in DialogueSystem to accept a whole profile
+            // New method we'll define in DialogueSystem to accept a whole profile
+        Debug.Log("🟢 Cashier mode triggered: about to start dialogue");
+
         dialogueSystem.StartCustomerInteraction(customerProfile);
     }
 
@@ -93,6 +102,10 @@ private void CacheRenderersIfNeeded()
         if (!isInCashierMode) return;
 
         Debug.Log(">>> ExitCashierMode triggered!");
+
+
+    if (inventoryCanvas != null)
+        inventoryCanvas.SetActive(true);
 
         // Re-enable player control
         if (playerController != null)

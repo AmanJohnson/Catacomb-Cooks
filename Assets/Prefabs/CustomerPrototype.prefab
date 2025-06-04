@@ -71,7 +71,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 1.5
-  profile: {fileID: 11400000, guid: 05652177e518cff44ba45bcfd7ea8c38, type: 2}
+  profile: {fileID: 11400000, guid: ce9beb95e304ac845bd76cc1965e2efa, type: 2}
 --- !u!136 &7745387200818319140
 CapsuleCollider:
   m_ObjectHideFlags: 0

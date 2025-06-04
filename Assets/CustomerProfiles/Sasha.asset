@@ -12,9 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c180ffd7da4fdf4b9e05aaa77c95ab5, type: 3}
   m_Name: Sasha
   m_EditorClassIdentifier: 
-  customerName: 
-  introLines: []
-  orderLine: 
-  playerResponseOptions: []
-  tipModifiers: 
-  emotionalResults: []
+  customerName: Sasha
+  introLines:
+  - "What\u2019s up, queen?\r\n"
+  - Mmm, I smell excellence. Or is that just me?
+  - "Let\u2019s hope you\u2019re less of a disaster than last time, babe.\n\n"
+  orderLine: 'Lemme get that spicy goblin sausage slice, extra crispy.
+
+'
+  playerResponseOptions:
+  - 'Only the crispiest for royalty like you.
+
+'
+  - 'Coming right up.
+
+'
+  - "Don\u2019t burn your mouth complaining this time.\r\n\r\n"
+  tipModifiers: 1400000000000000ecffffff
+  emotionalResults:
+  - Flattered
+  - Neutral
+  - Annoyed

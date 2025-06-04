@@ -16,6 +16,11 @@ public class DialogueSystem : MonoBehaviour
 
     private CustomerProfile currentCustomerProfile;
 
+    public GameObject responsePanel; // assign in inspector
+    public Button[] responseButtons; // assign 3 in inspector
+
+    private enum State { Intro, Order, Choice }
+    private State currentState;
 
     void Start()
 {
@@ -43,23 +48,28 @@ public class DialogueSystem : MonoBehaviour
             AdvanceDialogue();
         }
     }
-
-    public void StartCustomerInteraction(CustomerProfile profile)
+public void StartCustomerInteraction(CustomerProfile profile)
 {
+    Debug.Log("💬 StartCustomerInteraction() called with: " + profile.customerName);
+
     currentCustomerProfile = profile;
     currentLine = 0;
     isDialogueActive = true;
+    currentState = State.Intro;
+
     dialoguePanel.SetActive(true);
+    if (responsePanel != null)
+    responsePanel.SetActive(false);
 
-    // Show intro first
+
     dialogueText.text = profile.introLines[Random.Range(0, profile.introLines.Length)];
-
-    // Later we'll move to order, then choices
 }
 
 
    public void StartDialogue(string[] customLines)
 {
+    Debug.Log("⚠️ StartDialogue(string[]) called directly!");
+
     currentLine = 0;
     dialogueLines = customLines;
     dialoguePanel.SetActive(true);
@@ -70,20 +80,52 @@ public class DialogueSystem : MonoBehaviour
 
     void AdvanceDialogue()
     {
-        currentLine++;
-        if (currentLine < dialogueLines.Length)
+        if (currentState == State.Intro)
         {
-            dialogueText.text = dialogueLines[currentLine];
+            dialogueText.text = currentCustomerProfile.orderLine;
+            currentState = State.Order;
         }
-        else
+        else if (currentState == State.Order)
         {
-            EndDialogue();
+            ShowResponseOptions();
         }
     }
 
-    void EndDialogue()
+void ShowResponseOptions()
+{
+    currentState = State.Choice;
+    nextButton.gameObject.SetActive(false);
+    responsePanel.SetActive(true);
+
+    for (int i = 0; i < responseButtons.Length; i++)
     {
-        isDialogueActive = false;
-        dialoguePanel.SetActive(false);
+        int index = i;
+        responseButtons[i].GetComponentInChildren<TextMeshProUGUI>().text = currentCustomerProfile.playerResponseOptions[i];
+        responseButtons[i].onClick.RemoveAllListeners();
+        responseButtons[i].onClick.AddListener(() => SelectResponse(index));
     }
+}
+
+void SelectResponse(int index)
+{
+    string emotion = currentCustomerProfile.emotionalResults[index];
+    int tip = currentCustomerProfile.tipModifiers[index];
+
+    Debug.Log($"🗯️ Customer reaction: {emotion} | Tip modifier: {tip}");
+
+    EndDialogue();
+}
+
+
+
+  void EndDialogue()
+{
+    isDialogueActive = false;
+    dialoguePanel.SetActive(false);
+    if (responsePanel != null)
+    responsePanel.SetActive(false);
+
+    nextButton.gameObject.SetActive(true); 
+}
+
 }

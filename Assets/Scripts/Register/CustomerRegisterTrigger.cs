@@ -28,11 +28,6 @@ public class CustomerRegisterTrigger : MonoBehaviour
         }
     }
 
-private void OnTriggerStay(Collider other)
-{
-    Debug.Log("🌀 OnTriggerStay — object inside trigger: " + other.name);
-}
-
 
 
     public void SetPlayerInRange(bool state)

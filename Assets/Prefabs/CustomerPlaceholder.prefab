@@ -121,4 +121,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 1.5
-  profile: {fileID: 0}
+  profile: {fileID: 11400000, guid: ce9beb95e304ac845bd76cc1965e2efa, type: 2}

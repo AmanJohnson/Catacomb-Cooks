@@ -8,6 +8,20 @@ public class CustomerAI : MonoBehaviour
 
     public CustomerProfile profile;
 
+    private Animator animator;
+    private Vector3 lastPosition;
+
+    public Transform positionReference;
+
+
+    void Start()
+    {
+        animator = GetComponent<Animator>();
+if (positionReference != null)
+{
+    lastPosition = positionReference.position;
+}
+    }
 
     public void SetRegisterTarget(Transform target)
     {
@@ -16,26 +30,45 @@ public class CustomerAI : MonoBehaviour
 
     void Update()
     {
-        if (isWalking && registerTarget != null)
+        // Debug draw + log (optional)
+        if (registerTarget != null)
         {
-            // Only move on the XZ plane (no drifting due to Y axis mismatch)
-            Vector3 targetPosition = new Vector3(
-                registerTarget.position.x,
-                transform.position.y, // Keep customer's current Y
-                registerTarget.position.z
-            );
+            Vector3 customerXZ = new Vector3(positionReference.position.x, 0f, positionReference.position.z);
+            Vector3 registerXZ = new Vector3(registerTarget.position.x, 0f, registerTarget.position.z);
+            float distance = Vector3.Distance(customerXZ, registerXZ);
+     
 
-            transform.position = Vector3.MoveTowards(
-                transform.position,
-                targetPosition,
-                moveSpeed * Time.deltaTime
-            );
-
-            if (Vector3.Distance(transform.position, targetPosition) < 0.05f)
+            // Movement logic
+            if (isWalking)
             {
-                isWalking = false;
-                Debug.Log("✅ Customer reached the register exactly.");
+                Vector3 targetPosition = new Vector3(
+                    registerTarget.position.x,
+                    transform.position.y, // keep Y locked
+                    registerTarget.position.z
+                );
+
+                transform.position = Vector3.MoveTowards(
+                    transform.position,
+                    targetPosition,
+                    moveSpeed * Time.deltaTime
+                );
+
+                if (distance < 0.5f) // slightly looser tolerance
+                {
+                    isWalking = false;
+                }
             }
         }
+
+        // Animation speed logic
+        float currentSpeed = (positionReference.position - lastPosition).magnitude / Time.deltaTime;
+        if (animator != null)
+        {
+            animator.SetFloat("speed", isWalking ? currentSpeed : 0f);
+        }
+
+        lastPosition = positionReference.position;
+
     }
+
 }

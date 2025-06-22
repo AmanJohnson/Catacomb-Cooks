@@ -22,14 +22,19 @@ public class DialogueSystem : MonoBehaviour
     private enum State { Intro, Order, Choice }
     private State currentState;
 
-    void Start()
+void Start()
 {
-    // Force it to always reset to known state
-    dialoguePanel.SetActive(false);
-    isDialogueActive = false;
+    if (dialoguePanel == null)
+    {
+        Debug.LogError("❌ dialoguePanel is NULL in Start()");
+    }
+    else
+    {
+        dialoguePanel.SetActive(false);
+        Debug.Log("▶️ dialoguePanel assigned to: " + dialoguePanel.name);
+    }
 
-    // Log the reference to confirm
-    Debug.Log("▶️ dialoguePanel assigned to: " + dialoguePanel.name);
+    isDialogueActive = false;
 
     if (nextButton != null)
     {
@@ -41,6 +46,7 @@ public class DialogueSystem : MonoBehaviour
     }
 }
 
+
     void Update()
     {
         if (isDialogueActive && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)))
@@ -50,6 +56,24 @@ public class DialogueSystem : MonoBehaviour
     }
 public void StartCustomerInteraction(CustomerProfile profile)
 {
+    if (profile == null)
+    {
+        Debug.LogError("❌ StartCustomerInteraction() called with NULL profile");
+        return;
+    }
+
+    if (dialoguePanel == null)
+    {
+        Debug.LogError("❌ dialoguePanel is NULL in StartCustomerInteraction()");
+        return;
+    }
+
+    if (dialogueText == null)
+    {
+        Debug.LogError("❌ dialogueText is NULL in StartCustomerInteraction()");
+        return;
+    }
+
     Debug.Log("💬 StartCustomerInteraction() called with: " + profile.customerName);
 
     currentCustomerProfile = profile;
@@ -58,9 +82,9 @@ public void StartCustomerInteraction(CustomerProfile profile)
     currentState = State.Intro;
 
     dialoguePanel.SetActive(true);
+    
     if (responsePanel != null)
-    responsePanel.SetActive(false);
-
+        responsePanel.SetActive(false);
 
     dialogueText.text = profile.introLines[Random.Range(0, profile.introLines.Length)];
 }

@@ -6,27 +6,37 @@ public class CustomerRegisterTrigger : MonoBehaviour
     private bool isCustomerInRange = false;
     private bool isPlayerInRange = false;
 
-    void Update()
+  void Update()
+{
+ if (isPlayerInRange && Input.GetKeyDown(KeyCode.E))
+{
+    Debug.Log("✅ Interacted with register!");
+
+    var controller = FindObjectOfType<CashierViewController>();
+
+    if (currentCustomer != null)
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        Debug.Log("📦 currentCustomer exists");
+
+        if (currentCustomer.profile != null)
         {
-            Debug.Log($"Pressed E | CustomerInRange: {isCustomerInRange} | PlayerInRange: {isPlayerInRange}");
+            Debug.Log("💬 Profile is valid: " + currentCustomer.profile.customerName);
+            controller.EnterCashierMode(currentCustomer.profile);
         }
-
-        if (isCustomerInRange && isPlayerInRange && Input.GetKeyDown(KeyCode.E))
+        else
         {
-            Debug.Log("✅ Interacted with register!");
-
-            if (currentCustomer != null)
-            {
-                FindObjectOfType<CashierViewController>().EnterCashierMode(currentCustomer.profile);
-            }
-            else
-            {
-                Debug.LogWarning("⚠️ No customer assigned");
-            }
+            Debug.LogWarning("⚠️ Customer has no profile — still entering cashier mode");
+            controller.EnterCashierMode(null);
         }
     }
+    else
+    {
+        Debug.LogWarning("⚠️ No customer in front — entering cashier mode without dialogue");
+        controller.EnterCashierMode(null);
+    }
+}
+
+}
 
 
 

@@ -16,19 +16,23 @@ public class CashierViewController : MonoBehaviour
     
     public GameObject inventoryCanvas; 
 
+    public Transform vrmRoot;
+
 
 private void CacheRenderersIfNeeded()
+{
+    if ((cachedRenderers == null || cachedRenderers.Length == 0) && vrmRoot != null)
     {
-        if (cachedRenderers == null || cachedRenderers.Length == 0)
-        {
-            cachedRenderers = GetComponentsInChildren<SkinnedMeshRenderer>(true);
-            Debug.Log("🔍 Found " + cachedRenderers.Length + " SkinnedMeshRenderers.");
-            foreach (var r in cachedRenderers)
-            {
-                Debug.Log("🎯 Renderer: " + r.gameObject.name);
-            }
-        }
+        cachedRenderers = vrmRoot.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+        Debug.Log("🔍 Found " + cachedRenderers.Length + " SkinnedMeshRenderers under: " + vrmRoot.name);
     }
+    else if (vrmRoot == null)
+    {
+        Debug.LogWarning("❌ vrmRoot not assigned in Inspector");
+    }
+}
+
+
 
 
 
@@ -87,13 +91,20 @@ private void CacheRenderersIfNeeded()
         isInCashierMode = true;
 
     
-    if (dialogueSystem != null && customerProfile != null)
-    {
-            // New method we'll define in DialogueSystem to accept a whole profile
-        Debug.Log("🟢 Cashier mode triggered: about to start dialogue");
+  if (dialogueSystem != null && customerProfile != null)
+{
+    Debug.Log("🟢 Cashier mode triggered: about to start dialogue");
+    dialogueSystem.StartCustomerInteraction(customerProfile);
+}
+else
+{
+    if (dialogueSystem == null)
+        Debug.LogError("❌ dialogueSystem is NULL in CashierViewController");
 
-        dialogueSystem.StartCustomerInteraction(customerProfile);
-    }
+    if (customerProfile == null)
+        Debug.LogError("❌ customerProfile is NULL in CashierViewController");
+}
+
 
 }
 

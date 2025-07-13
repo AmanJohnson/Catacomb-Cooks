@@ -28,6 +28,10 @@ MonoBehaviour:
 
 '
   - "Don\u2019t burn your mouth complaining this time.\r\n\r\n"
+  reactionLines:
+  - That's right. Now you're talkin'.
+  - Don't mess it up.
+  - Excuse me?!
   tipModifiers: 1400000000000000ecffffff
   emotionalResults:
   - Flattered

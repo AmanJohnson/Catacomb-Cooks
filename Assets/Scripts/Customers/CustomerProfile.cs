@@ -8,6 +8,8 @@ public class CustomerProfile : ScriptableObject
     [TextArea] public string[] introLines;
     [TextArea] public string orderLine;
     [TextArea] public string[] playerResponseOptions; // 3 options
+    
+    public string[] reactionLines; // Same length as responseButtons
     public int[] tipModifiers; // e.g. +20, 0, -20
     public string[] emotionalResults; // e.g. "Flattered", "Neutral", "Annoyed"
 }

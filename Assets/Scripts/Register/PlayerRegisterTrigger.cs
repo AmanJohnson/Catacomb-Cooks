@@ -9,7 +9,11 @@ public class PlayerRegisterTrigger : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Debug.Log("👤 Player entered E zone");
-            customerZone.SetPlayerInRange(true);
+
+            if (customerZone != null)
+                customerZone.SetPlayerInRange(true);
+            else
+                Debug.LogWarning("⚠️ customerZone not assigned!");
         }
     }
 
@@ -17,8 +21,8 @@ public class PlayerRegisterTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("👤 Player left E zone");
-            customerZone.SetPlayerInRange(false);
+            if (customerZone != null)
+                customerZone.SetPlayerInRange(false);
         }
     }
 }

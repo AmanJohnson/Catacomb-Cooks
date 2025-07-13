@@ -18,21 +18,71 @@ public class CashierViewController : MonoBehaviour
 
     public Transform vrmRoot;
 
+    public CustomerAI currentCustomer;
 
-private void CacheRenderersIfNeeded()
-{
-    if ((cachedRenderers == null || cachedRenderers.Length == 0) && vrmRoot != null)
+    void Update()
     {
-        cachedRenderers = vrmRoot.GetComponentsInChildren<SkinnedMeshRenderer>(true);
-        Debug.Log("🔍 Found " + cachedRenderers.Length + " SkinnedMeshRenderers under: " + vrmRoot.name);
-    }
-    else if (vrmRoot == null)
-    {
-        Debug.LogWarning("❌ vrmRoot not assigned in Inspector");
-    }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (IsCustomerReady())
+            {
+                if (!isInCashierMode && currentCustomer != null && currentCustomer.profile != null)
+                {
+                    EnterCashierMode(currentCustomer.profile);
+                }
+                else
+                {
+                    Debug.LogWarning("⚠️ Customer not fully ready or already in cashier mode.");
+                }
+            }
+            else
+            {
+                Debug.Log("❌ No customer at the register yet.");
+            }
+        }
+
+    
+ if (isInCashierMode &&
+                  currentCustomer != null &&
+                  currentCustomer.profile != null &&
+                  !currentCustomer.IsWalking() &&
+                  !currentCustomer.hasStartedDialogue)
+        {
+
+            if (dialogueSystem != null)
+            {
+                dialogueSystem.StartCustomerInteraction(currentCustomer.profile);
+                currentCustomer.hasStartedDialogue = true;
+            }
+            else
+            {
+                Debug.LogError("❌ dialogueSystem is NULL during auto-trigger!");
+            }
+        }
+
+
 }
 
 
+
+private void CacheRenderersIfNeeded()
+    {
+        if ((cachedRenderers == null || cachedRenderers.Length == 0) && vrmRoot != null)
+        {
+            cachedRenderers = vrmRoot.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            Debug.Log("🔍 Found " + cachedRenderers.Length + " SkinnedMeshRenderers under: " + vrmRoot.name);
+        }
+        else if (vrmRoot == null)
+        {
+            Debug.LogWarning("❌ vrmRoot not assigned in Inspector");
+        }
+    }
+
+
+public bool IsCustomerReady()
+{
+    return currentCustomer != null && !currentCustomer.IsWalking();
+}
 
 
 
@@ -90,20 +140,23 @@ private void CacheRenderersIfNeeded()
 
         isInCashierMode = true;
 
-    
-  if (dialogueSystem != null && customerProfile != null)
-{
-    Debug.Log("🟢 Cashier mode triggered: about to start dialogue");
-    dialogueSystem.StartCustomerInteraction(customerProfile);
-}
-else
-{
-    if (dialogueSystem == null)
-        Debug.LogError("❌ dialogueSystem is NULL in CashierViewController");
 
-    if (customerProfile == null)
-        Debug.LogError("❌ customerProfile is NULL in CashierViewController");
+        if (dialogueSystem != null && customerProfile != null)
+        {
+            Debug.Log("🟢 Cashier mode triggered: about to start dialogue");
+            dialogueSystem.StartCustomerInteraction(customerProfile);
+    
+    currentCustomer.hasStartedDialogue = true;
+
 }
+        else
+        {
+            if (dialogueSystem == null)
+                Debug.LogError("❌ dialogueSystem is NULL in CashierViewController");
+
+            if (customerProfile == null)
+                Debug.LogError("❌ customerProfile is NULL in CashierViewController");
+        }
 
 
 }
